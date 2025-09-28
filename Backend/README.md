@@ -298,6 +298,183 @@ Register a new captain in the system.
 - Location tracking fields (lat/lng) are optional
 - SocketId field available for real-time communication
 
+### Login Captain
+Authenticate an existing captain and receive an access token.
+
+**Endpoint:** `POST /captains/login`
+
+**Request Body:**
+```json
+{
+    "email": "string",    // Required, valid email format
+    "password": "string"  // Required, minimum 6 characters
+}
+```
+
+**Example Request:**
+```json
+{
+    "email": "captain@gmail.com",
+    "password": "password123"
+}
+```
+
+**Success Response:**
+- **Status Code:** 200 (OK)
+- **Response Body:**
+```json
+{
+    "captain": {
+        "fullname": {
+            "firstname": "Shayan_Captain",
+            "lastname": "Shayan_Captain"
+        },
+        "email": "captain@gmail.com",
+        "vehicle": {
+            "color": "red",
+            "plate": "MP 04 XY 6234",
+            "capacity": 3,
+            "vehicleType": "car"
+        },
+        "status": "inactive",
+        "_id": "captain-id"
+    },
+    "token": "JWT_TOKEN"
+}
+```
+
+**Error Responses:**
+
+1. Invalid Credentials (Status Code: 401)
+```json
+{
+    "message": "Invalid email or password"
+}
+```
+
+2. Validation Errors (Status Code: 400)
+```json
+{
+    "errors": [
+        {
+            "msg": "Name is required",
+            "param": "email",
+            "location": "body"
+        },
+        {
+            "msg": "Password must be at least 6 characters long",
+            "param": "password",
+            "location": "body"
+        }
+    ]
+}
+```
+
+### Get Captain Profile
+Get the profile information of the authenticated captain.
+
+**Endpoint:** `GET /captains/profile`
+
+**Authentication Required:** Yes (Bearer Token)
+
+**Headers:**
+```
+Authorization: Bearer <JWT_TOKEN>
+```
+
+**Success Response:**
+- **Status Code:** 200 (OK)
+- **Response Body:**
+```json
+{
+    "captain": {
+        "fullname": {
+            "firstname": "Shayan_Captain",
+            "lastname": "Shayan_Captain"
+        },
+        "email": "captain@gmail.com",
+        "vehicle": {
+            "color": "red",
+            "plate": "MP 04 XY 6234",
+            "capacity": 3,
+            "vehicleType": "car"
+        },
+        "status": "inactive",
+        "_id": "captain-id",
+        "location": {
+            "lat": 123.456,
+            "lng": 789.012
+        }
+    }
+}
+```
+
+**Error Responses:**
+
+1. No Token Provided (Status Code: 401)
+```json
+{
+    "message": "Access denied. No token provided."
+}
+```
+
+2. Invalid Token (Status Code: 401)
+```json
+{
+    "message": "Invalid token."
+}
+```
+
+3. Captain Not Found (Status Code: 404)
+```json
+{
+    "message": "Captain not found"
+}
+```
+
+### Logout Captain
+Logout the currently authenticated captain and invalidate their token.
+
+**Endpoint:** `GET /captains/logout`
+
+**Authentication Required:** Yes (Bearer Token)
+
+**Headers:**
+```
+Authorization: Bearer <JWT_TOKEN>
+```
+
+**Success Response:**
+- **Status Code:** 200 (OK)
+- **Response Body:**
+```json
+{
+    "message": "Logged out successfully"
+}
+```
+
+**Error Responses:**
+
+1. No Token Provided (Status Code: 401)
+```json
+{
+    "message": "Access denied. No token provided."
+}
+```
+
+2. Invalid Token (Status Code: 401)
+```json
+{
+    "message": "Invalid token."
+}
+```
+
+**Security Features:**
+- Requires valid JWT token for authentication
+- Blacklists the token upon logout to prevent reuse
+- Clears authentication cookies if present
+- Token verification happens before database queries for better performance
+
 ### Get User Profile
 Get the profile information of the authenticated user.
 
