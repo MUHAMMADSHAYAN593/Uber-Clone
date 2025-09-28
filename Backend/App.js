@@ -4,6 +4,7 @@ import cors from 'cors';
 import connectDB from './db/db.js';
 import UserRoutes from './routes/user.route.js';
 import cookieParser from 'cookie-parser';
+import Captainrouter from './routes/captain.routes.js';
 
 
 
@@ -23,6 +24,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/users', UserRoutes);
+app.use('/captains', Captainrouter);
+
 
 
 app.get('/', (req, res) => {
