@@ -1,6 +1,12 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import axios from 'axios';
+import { UserDataContext } from '../context/UserContext';
+
 
 const UserSignup = () => {
+  const navigate = useNavigate();
+  const { user, setUser } = React.useContext(UserDataContext);
   const [formData, setFormData] = useState({
     firstname: '',
     lastname: '',
@@ -16,10 +22,25 @@ const UserSignup = () => {
     }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log('Form submitted with:', formData)
-    // Clear form after submission
+    const newuser = {
+      fullname: {
+        firstname: formData.firstname,
+        lastname: formData.lastname
+      },
+      email: formData.email,
+      password: formData.password
+    }
+
+    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/register`, newuser);
+    if(response.status === 201){
+      const data = response.data;
+      setUser(data.user);
+      localStorage.setItem('token', data.token);
+      navigate('/home');
+    }
+   
     setFormData({
       firstname: '',
       lastname: '',
@@ -27,6 +48,10 @@ const UserSignup = () => {
       password: ''
     })
   }
+
+
+
+
 
   return (
     <div className='min-h-screen bg-white flex flex-col'>
@@ -98,13 +123,13 @@ const UserSignup = () => {
             type="submit"
             className='bg-black text-white font-semibold rounded px-3 py-2 w-full text-base hover:bg-gray-800 transition-colors mt-3'
           >
-            Sign Up
+            Create account
           </button>
 
           <p className='text-center text-sm text-gray-600 mt-4'>
             Already have an account? 
             <a href="/login" className='text-black font-medium ml-1 hover:underline'>
-              Log in
+              Login Here
             </a>
           </p>
         </div>

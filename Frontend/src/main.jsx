@@ -4,10 +4,19 @@ import './index.css'
 import App from './App.jsx'
 import { BrowserRouter } from 'react-router-dom'
 
+// 👇 both are default exports now
+import UserContext from './context/UserContext.jsx'
+
+import CaptainContext from './context/CaptainContext.jsx'
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-      <App />
+      <CaptainContext>
+        <UserContext>
+          <App />
+        </UserContext>
+      </CaptainContext>
     </BrowserRouter>
-  </StrictMode>,
-)
+  </StrictMode>
+);

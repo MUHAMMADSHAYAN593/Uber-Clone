@@ -1,6 +1,11 @@
 import React, { useState } from 'react'
+import {CaptainDataContext} from '../context/CaptainContext';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const CaptainSignup = () => {
+  const { captain, setCaptain } = React.useContext(CaptainDataContext);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstname: '',
     lastname: '',
@@ -33,9 +38,35 @@ const CaptainSignup = () => {
     }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     console.log('Form submitted with:', formData)
+
+    const CaptainData = {
+      fullname: {
+        firstname: formData.firstname,
+        lastname: formData.lastname
+      },
+      email: formData.email,
+      password: formData.password,
+      vehicle: {
+        color: formData.vehicle.color,
+        plate: formData.vehicle.plate,
+        capacity: formData.vehicle.capacity,
+        vehicleType: formData.vehicle.vehicleType
+      }
+    }
+
+    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/captains/register`, CaptainData);
+    if(response.status === 201){
+      const data = response.data;
+      setCaptain(data.captain);
+      localStorage.setItem('token', data.token);
+      navigate('/captain-home');
+    }
+
+
+
     // Clear form after submission
     setFormData({
       firstname: '',
@@ -179,7 +210,7 @@ const CaptainSignup = () => {
             type="submit"
             className='bg-black text-white font-semibold rounded px-3 py-2 w-full text-base hover:bg-gray-800 transition-colors mt-3'
           >
-            Sign Up
+            Create Captain Account
           </button>
 
           <p className='text-center text-sm text-gray-600 mt-4'>
